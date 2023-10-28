@@ -5,6 +5,6 @@ import { auth } from './endpoints/auth';
 const router = Router();
 
 router.get('/hello', sayHello);
-router.get('/auth', auth)
+router.get('/auth/:token', auth);
 
 export default router;
