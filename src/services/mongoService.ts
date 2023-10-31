@@ -4,6 +4,7 @@ import { config } from "../config/config";
 interface Collections {
     raids: Collection;
     auth: Collection;
+    reports: Collection;
   }
 
 class MongoService {
@@ -17,6 +18,7 @@ class MongoService {
     this.collections = {
       raids: null as unknown as Collection,
       auth: null as unknown as Collection,
+      reports: null as unknown as Collection
     };
     
     this.connect();
@@ -28,6 +30,7 @@ class MongoService {
       this.db = this.client.db(config.mongoDB.db);
       this.collections.raids = this.db.collection(config.mongoDB.dbRaids);
       this.collections.auth = this.db.collection(config.mongoDB.dbAuth);
+      this.collections.reports = this.db.collection(config.mongoDB.dbReports);
     } catch (error) {
       console.error('MongoDB connection error:', error);
     }
