@@ -11,7 +11,7 @@ export interface IPerms{
 }
 
 export const perms: IPerms = {
-    officer: ['getRaids', 'updateRaids', 'createRaids', 'getAllReports'],
+    officer: ['getRaids', 'updateRaids', 'createRaids', 'getAllReports', 'closeReport'],
     raidLead: ['getRaids', 'updateRaids', 'createRaids', 'callRaid'],
     user: ['getReport', 'createReport', 'replyReport']
 }
