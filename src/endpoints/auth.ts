@@ -8,7 +8,7 @@ export async function auth(req: Request, res: Response): Promise<void> {
   const pToken = req.params.token
 
   if (!pToken) {
-    res.status(400).json({ message: 'Token is required in the URL path to authenticate.' });
+    res.status(400).json({ message: 'Token is required to verify access to this page.' });
     return;
   }
 
