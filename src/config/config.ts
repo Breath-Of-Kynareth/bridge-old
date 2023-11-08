@@ -16,10 +16,6 @@ export const config = {
     dbAuth: process.env.MONGODB_AUTH!,
     dbReports: process.env.MONGODB_REPORTS!
   },
-  secrets: {
-    jwt: process.env.JWT_SECRET!,
-    jwtExp: process.env.JWT_EXP!
-  },
   roles: {
     officer: process.env.OFFICER_ROLE!,
     raidLead: process.env.RAID_LEAD!,
