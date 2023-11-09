@@ -4,14 +4,16 @@
 * and defined in the database from BOKBot.
 */
 
+import { config } from "../config/config";
+
 export interface IPerms{
-    officer: string[];
-    raidLead: string[];
-    user: string[];
+    officer: string;
+    raidLead: string;
+    user: string;
 }
 
 export const perms: IPerms = {
-    officer: ['getRaids', 'updateRaids', 'createRaids', 'getAllReports', 'closeReport'],
-    raidLead: ['getRaids', 'updateRaids', 'createRaids', 'callRaid'],
-    user: ['getReport', 'createReport', 'replyReport']
+    officer: config.roles.officer,
+    raidLead: config.roles.raidLead,
+    user: config.roles.user
 }
