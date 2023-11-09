@@ -32,13 +32,13 @@ export async function getRaids(req: Request, res: Response): Promise<void> {
 export async function postRaid(req: Request, res: Response): Promise<void> {
   const raids = mongoService.getCollections().raids;
   const authToken = req.headers.authorization;
-  const application = 'Roster-Manager'
+  const application = 'Roster-Manager';
   if (authToken === undefined || authToken === null){
     res.status(401).json({ message: 'Token is required for access to this functionality' });
     return;
   }
 
-  const permission = await authService.validatePermissions(authToken!, perms.user, application);
+  const permission = await authService.validatePermissions(authToken!, perms.raidLead, application);
   
   if(permission === false){
     res.status(403).json({ message: 'You do not have permission to use this functionality.' });
