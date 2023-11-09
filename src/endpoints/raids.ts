@@ -5,7 +5,6 @@ import { authService } from '../services/authService';
 
 export async function getRaids(req: Request, res: Response): Promise<void> {
   const raids = mongoService.getCollections().raids;
-  const auth = mongoService.getCollections().auth;
   const authToken = req.headers.authorization;
   const application = req.params.application
   
@@ -26,26 +25,31 @@ export async function getRaids(req: Request, res: Response): Promise<void> {
   if (result) {
     res.json({ raids: result });
   } else {
-    res.status(404).json({ message: 'Server is unable to find any Roster Information' });
+    res.status(404).json({ message: 'Unable to find any Roster Information' });
   }
 }
 
 export async function postRaid(req: Request, res: Response): Promise<void> {
   const raids = mongoService.getCollections().raids;
-  const auth = mongoService.getCollections().auth;
-  const authToken = req.headers.authorization; // const result = await auth.findOne({ token: authToken.replace("Bearer ", "") });
-
+  const authToken = req.headers.authorization;
+  const application = 'Roster-Manager'
   if (authToken === undefined || authToken === null){
-    res.status(403).json({ message: 'Token is required for access to this functionality' })
-  } else {
-    const result = await auth.findOne({ token: authToken.replace("Bearer ", "") });
+    res.status(401).json({ message: 'Token is required for access to this functionality' });
+    return;
+  }
+
+  const permission = await authService.validatePermissions(authToken!, perms.user, application);
+  
+  if(permission === false){
+    res.status(403).json({ message: 'You do not have permission to use this functionality.' });
+    return;
   }
 
   const result = await raids.find({}).toArray();
 
   if (result) {
-    res.json({ returnAuth: result });
+    res.json({ raids: result });
   } else {
-    res.status(404).json({ message: 'Could not find authentication with that token.' });
+    res.status(404).json({ message: 'Server is unable to find any Roster Information' });
   }
 }
