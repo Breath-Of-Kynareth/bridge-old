@@ -26,6 +26,26 @@ class AuthService {
     return false;
   }
 
+
+  async checkTimeout(bearerToken: string): Promise<Boolean> {
+    const db = mongoService.getCollections().auth;
+    const userToken = bearerToken.replace("Bearer ","");
+    const document = await db.findOne({ token: userToken });
+    if (document === undefined || document === null){
+      logger.warn(`Document not found for Token: ${ userToken }`);
+      return false;
+    }
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+
+    const checkingTimestamp = document.timeout;
+
+    if (checkingTimestamp > currentTimestamp) {
+      return true;
+    }
+
+    return false;
+  }
+
 }
 
 const authService = new AuthService();
