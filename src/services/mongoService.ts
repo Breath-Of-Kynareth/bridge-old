@@ -1,5 +1,6 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 import { config } from "../config/config";
+import { Raid } from '../models/raid';
  
 interface Collections {
     raids: Collection;
@@ -38,6 +39,29 @@ class MongoService {
 
   getCollections(): Collections {
     return this.collections;
+  }
+
+  async createNewRoster(raid: Raid){
+    const db = this.getCollections().raids;
+
+    const record: Raid = {
+      raid: raid.raid,
+      date: raid.date,
+      leader: raid.leader,
+      dps: {},
+      healers: {},
+      tanks: {},
+      backup_dps: {},
+      backup_healers: {},
+      backup_tanks: {},
+      dps_limit: raid.dps_limit,
+      healer_limit: raid.healer_limit,
+      tank_limit: raid.tank_limit,
+      role_limit: raid.role_limit,
+      memo: raid.memo
+    };
+
+    await db.insertOne(record);  
   }
 }
 
