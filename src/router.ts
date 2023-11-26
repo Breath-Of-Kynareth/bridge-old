@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { getAllRosters, postNewRoster } from './endpoints/raids';
+import { getAllRosters, postNewRoster, postModifiedRoster } from './endpoints/rosters';
 const router = Router();
 
-router.get('/raids/:application', getAllRosters);
-router.post('/raids', postNewRoster);
+router.get('/rosters/:application', getAllRosters);
+router.post('/newRoster', postNewRoster);
+router.post('/updateRoster', postModifiedRoster)
 export default router;
