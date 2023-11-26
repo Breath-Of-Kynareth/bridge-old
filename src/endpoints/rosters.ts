@@ -60,8 +60,6 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     return;
   }
 
-  console.log(req);
-
   if (!req.body) {
     res.status(400).json({ error: 'Request body is missing' });
     return;
@@ -73,7 +71,51 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
   console.log(newRoster);
 
   logger.info('Creating New Roster')
-  mongoService.createNewRoster(newRoster);
+  const tempId = await mongoService.createNewRoster(newRoster);
+
+  if(tempId === 0){
+    res.status(500).json({ message: 'Unable To Create New Roster Internal Server Error 500' })
+    return;
+  }
+
+  // ADD IN RABBITMQ STUFF HERE
+
+  res.status(200).json({message: 'Check DB'});
+  return;
+}
+
+export async function postModifiedRoster(req: Request, res: Response): Promise<void> {
+  const raids = mongoService.getCollections().raids;
+  const authToken = req.headers.authorization;
+  const application = 'Roster-Manager';
+  if (authToken === undefined || authToken === null){
+    res.status(401).json({ message: 'Token is required for access to this functionality' });
+    return;
+  }
+
+  const timeoutCheck = await authService.checkTimeout(authToken);
+  if(timeoutCheck === false) {
+    res.status(403).json({ message: 'Authentication Token has expired.' });
+    return;
+  }
+
+  const permission = await authService.validatePermissions(authToken, perms.raidLead, application);
+  
+  if(permission === false){
+    res.status(403).json({ message: 'You do not have permission to use this functionality.' });
+    return;
+  }
+
+  if (!req.body) {
+    res.status(400).json({ error: 'Request body is missing' });
+    return;
+  }
+
+  const updatedRoster: Raid = req.body.data;
+  const channelId = req.body.channelId;
+
+  logger.info('Creating New Roster')
+  mongoService.updateRoster(updatedRoster, channelId);
 
   res.status(200).json({message: 'Check DB'});
 
