@@ -4,6 +4,7 @@ import { mongoService } from '../services/mongoService';
 import { authService } from '../services/authService';
 import { Raid } from '../models/raid';
 import { logger } from '../config/logger';
+import { rabbitService } from '../services/rabbitMQService';
 
 export async function getAllRosters(req: Request, res: Response): Promise<void> {
   const raids = mongoService.getCollections().raids;
@@ -68,8 +69,6 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
   const newRoster: Raid = req.body;
 
 
-  console.log(newRoster);
-
   logger.info('Creating New Roster')
   const tempId = await mongoService.createNewRoster(newRoster);
 
@@ -77,8 +76,8 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     res.status(500).json({ message: 'Unable To Create New Roster Internal Server Error 500' })
     return;
   }
-
-  // ADD IN RABBITMQ STUFF HERE
+  
+  rabbitService.sendNewRosterToBot(tempId);
 
   res.status(200).json({message: 'Check DB'});
   return;
