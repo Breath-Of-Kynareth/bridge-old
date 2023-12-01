@@ -39,7 +39,6 @@ export async function getAllRosters(req: Request, res: Response): Promise<void> 
 }
 
 export async function postNewRoster(req: Request, res: Response): Promise<void> {
-  const raids = mongoService.getCollections().raids;
   const authToken = req.headers.authorization;
   const application = 'Roster-Manager';
   if (authToken === undefined || authToken === null){
@@ -52,7 +51,6 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     res.status(403).json({ message: 'Authentication Token has expired.' });
     return;
   }
-
 
   const permission = await authService.validatePermissions(authToken, perms.raidLead, application);
   
@@ -77,14 +75,17 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     return;
   }
   
-  rabbitService.sendNewRosterToBot(tempId);
+  const result = await rabbitService.sendNewRosterToBot(tempId);
 
-  res.status(200).json({message: 'Check DB'});
+  if (result) {
+    res.status(200).json({message: 'New roster sent to BOKBot.'});
+  } else {
+    res.status(500).json({ message: 'Server is unable to communicate new roster to BOKBot.' });
+  }
   return;
 }
 
 export async function postModifiedRoster(req: Request, res: Response): Promise<void> {
-  const raids = mongoService.getCollections().raids;
   const authToken = req.headers.authorization;
   const application = 'Roster-Manager';
   if (authToken === undefined || authToken === null){
@@ -116,11 +117,12 @@ export async function postModifiedRoster(req: Request, res: Response): Promise<v
   logger.info('Creating New Roster')
   mongoService.updateRoster(updatedRoster, channelId);
 
-  res.status(200).json({message: 'Check DB'});
-
-  /*if (result) {
-    res.json({ raids: result });
+  const result = await rabbitService.sendModifiedRosterToBot(channelId);
+  
+  if (result) {
+    res.status(200).json({message: 'Update sent to BOKBot.'});
   } else {
-    res.status(404).json({ message: 'Server is unable to find any Roster Information' });
-  }*/
+    res.status(500).json({ message: 'Server is unable to communicate updates to BOKBot.' });
+  }
+  return;
 }

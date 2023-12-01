@@ -43,6 +43,6 @@ class RabbitService {
 }
   
   
-  const rabbitService = new RabbitService();
+const rabbitService = new RabbitService();
   
-  export { rabbitService };
+export { rabbitService };
