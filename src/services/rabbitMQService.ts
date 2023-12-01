@@ -24,6 +24,19 @@ class RabbitService {
             logger.info(`Token Sent.`)
         } catch(e){
             console.log(`Unable To Send New Roster Token: ${e}`);
+            return false;
+        }
+        return true;
+    }
+
+    async sendModifiedRosterToBot(channelId: string): Promise<Boolean> {
+        try{
+            logger.info(`Sending Modified Roster to RabbitMQ Channel ID: ${ channelId }`);
+            await this.channel.sendToQueue('modifiedRoster', Buffer.from(channelId));
+            logger.info(`Token Sent.`)
+        } catch(e){
+            console.log(`Unable To Send Modified Roster Channel ID: ${e}`);
+            return false;
         }
         return true;
     }
