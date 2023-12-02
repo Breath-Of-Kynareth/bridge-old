@@ -104,7 +104,15 @@ class MongoService {
       memo: raid.memo
     };
 
-    await db.insertOne(record);  
+    const filter = { channelID: id };
+
+    const recordWrapper = {
+      $set: {
+        data: record
+      }
+    }
+
+    await db.updateOne(filter, recordWrapper);  
   }
 }
 
