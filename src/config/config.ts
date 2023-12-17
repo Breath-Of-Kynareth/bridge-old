@@ -22,5 +22,6 @@ export const config = {
     raidLead: process.env.RAID_LEAD!,
     user: process.env.USER!
   },
-  rabbitmq: process.env.RABBITMQ!
+  rabbitmq: process.env.RABBITMQ!,
+  allowedHost: process.env.SITE_URL!
 }
