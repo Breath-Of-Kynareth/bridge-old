@@ -6,6 +6,40 @@ import { Raid } from '../models/raid';
 import { logger } from '../config/logger';
 import { rabbitService } from '../services/rabbitMQService';
 
+// TODO: Create more robust check for the records
+
+function validateNewRoster(roster: Raid): boolean{
+  return (
+    typeof roster.raid === 'string' &&
+    typeof roster.date === 'string' &&
+    typeof roster.leader === 'string' &&
+    typeof roster.dps_limit === 'number' &&
+    typeof roster.healer_limit === 'number' &&
+    typeof roster.tank_limit === 'number' &&
+    typeof roster.role_limit === 'number' &&
+    typeof roster.memo === 'string'
+  );
+}
+
+function validateModifiedRoster(roster: Raid): boolean{
+  return (
+    typeof roster.raid === 'string' &&
+    typeof roster.date === 'string' &&
+    typeof roster.leader === 'string' &&
+    typeof roster.dps === 'object' &&
+    typeof roster.healers === 'object' &&
+    typeof roster.tanks === 'object' &&
+    typeof roster.backup_dps === 'object' &&
+    typeof roster.backup_healers === 'object' &&
+    typeof roster.backup_tanks === 'object' &&
+    typeof roster.dps_limit === 'number' &&
+    typeof roster.healer_limit === 'number' &&
+    typeof roster.tank_limit === 'number' &&
+    typeof roster.role_limit === 'number' &&
+    typeof roster.memo === 'string'
+  );
+}
+
 export async function getAllRosters(req: Request, res: Response): Promise<void> {
   const raids = mongoService.getCollections().raids;
   const authToken = req.headers.authorization;
@@ -64,6 +98,11 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     return;
   }
 
+  if(!validateNewRoster(req.body)){
+    res.status(400).json({message: 'Request body is incorrect.'})
+    return;
+  }
+
   const newRoster: Raid = req.body;
 
 
@@ -108,6 +147,11 @@ export async function postModifiedRoster(req: Request, res: Response): Promise<v
 
   if (!req.body) {
     res.status(400).json({ error: 'Request body is missing' });
+    return;
+  }
+
+  if(!validateModifiedRoster(req.body)){
+    res.status(400).json({message: 'Request body is incorrect.'})
     return;
   }
 
