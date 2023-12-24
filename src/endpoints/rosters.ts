@@ -98,12 +98,12 @@ export async function postNewRoster(req: Request, res: Response): Promise<void> 
     return;
   }
 
-  if(!validateNewRoster(req.body)){
+  if(!validateNewRoster(req.body.data)){
     res.status(400).json({message: 'Request body is incorrect.'})
     return;
   }
 
-  const newRoster: Raid = req.body;
+  const newRoster: Raid = req.body.data;
 
 
   logger.info('Creating New Roster')
@@ -150,13 +150,13 @@ export async function postModifiedRoster(req: Request, res: Response): Promise<v
     return;
   }
 
-  if(!validateModifiedRoster(req.body)){
+  if(!validateModifiedRoster(req.body.data)){
     res.status(400).json({message: 'Request body is incorrect.'})
     return;
   }
 
   const updatedRoster: Raid = req.body.data;
-  const channelId = req.body.channelId;
+  const channelId = req.body.channelID;
 
   logger.info('Creating New Roster')
   mongoService.updateRoster(updatedRoster, channelId);
