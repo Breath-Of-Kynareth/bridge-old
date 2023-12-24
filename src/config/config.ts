@@ -15,7 +15,8 @@ export const config = {
     dbRaids: process.env.MONGODB_RAIDS!,
     dbAuth: process.env.MONGODB_AUTH!,
     dbReports: process.env.MONGODB_REPORTS!,
-    dbSite: process.env.MONGODB_SITE!
+    dbSite: process.env.MONGODB_SITE!,
+    dbMisc: process.env.MONGODB_MISC!
   },
   roles: {
     officer: process.env.OFFICER_ROLE!,

@@ -3,12 +3,14 @@ import { config } from "../config/config";
 import { Raid } from '../models/raid';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../config/logger';
+import { RankDocument } from '../models/ranks';
 
 interface Collections {
     raids: Collection;
     auth: Collection;
     reports: Collection;
     site: Collection;
+    misc: Collection;
   }
 
 class MongoService {
@@ -23,7 +25,8 @@ class MongoService {
       raids: null as unknown as Collection,
       auth: null as unknown as Collection,
       reports: null as unknown as Collection,
-      site: null as unknown as Collection
+      site: null as unknown as Collection,
+      misc: null as unknown as  Collection
     };
     
     this.connect();
@@ -37,6 +40,7 @@ class MongoService {
       this.collections.auth = this.db.collection(config.mongoDB.dbAuth);
       this.collections.reports = this.db.collection(config.mongoDB.dbReports);
       this.collections.site = this.db.collection(config.mongoDB.dbSite);
+      this.collections.misc = this.db.collection(config.mongoDB.dbMisc);
     } catch (error) {
       console.error('MongoDB connection error:', error);
     }
@@ -113,6 +117,34 @@ class MongoService {
     }
 
     await db.updateOne(filter, recordWrapper);  
+  }
+
+  async getRanks(): Promise<string[] | null> {
+    try{
+      const db = this.getCollections().misc;
+
+      const progRanks: RankDocument | null = await db.findOne({key: 'progRoles'}) as RankDocument | null;
+
+      if(progRanks === null){
+        logger.error('Prog Ranks Document returned Null value.');
+        return null;
+      }
+
+      const mainRanks: RankDocument | null  = await db.findOne({key: 'rankList'}) as RankDocument | null;
+
+      if(mainRanks === null){
+        logger.error('Main Ranks Document returned Null value.');
+        return null;
+      }
+
+      const totalRanks: string[] = mainRanks.data.concat(progRanks.data)
+
+      return totalRanks;
+
+    } catch(e) {
+      logger.error(`Encountered Error on GET Ranks: ${ e }`)
+      return null;
+    }
   }
 }
 
