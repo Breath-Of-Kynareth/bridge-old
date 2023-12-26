@@ -21,7 +21,7 @@ export const config = {
   roles: {
     officer: process.env.OFFICER_ROLE!,
     raidLead: process.env.RAID_LEAD!,
-    user: process.env.USER!
+    user: process.env.USER_ROLE!
   },
   rabbitmq: process.env.RABBITMQ!,
   allowedHost: process.env.SITE_URL!
